@@ -2,7 +2,7 @@
 // L.geoJSON(geojson).addTo(mymap);
 
 let coronaDE = $.ajax({
-  url: "corona2.geo.json",
+  url: "http://localhost:3000/data",
   dataType: "json",
   success: console.log("Corona data successfully loaded."),
   error: function (xhr) {
@@ -13,63 +13,61 @@ let coronaDE = $.ajax({
 $.when(coronaDE).done(() => {
   let map = L.map('mapid').setView([51.505, 10.27], 6);
 
-  L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=p2muKqp8PhaAAjVF7kqL', {
+  L.tileLayer('https://api.maptiler.com/maps/bright/{z}/{x}/{y}.png?key=p2muKqp8PhaAAjVF7kqL', {
     attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
     tilesize: 512,
     maxZoom: 18
   }).addTo(map);
 
   let corona = L.geoJSON(coronaDE.responseJSON, {
-    style: function () {
+    style: function (layer) {
       return {
-        color: 'green',
-        weight: 0.3
+        fillOpacity: 0.5,
+        opacity: 0.7,
+        weight: 0.3,
+        color: "#fff"
       }
     },
     onEachFeature: function (feature, layer) {
-      popupOptions = {maxWidth: 300};
-      layer.bindPopup('<b>'+layer.feature.properties.GEN+'</b><br><p>'+"Cases: "+layer.feature.properties.cases+'</p><p>'+"Deaths: "+layer.feature.properties.deaths+'</p>');
+      popupOptions = {
+        maxWidth: 300
+      };
+      layer.bindPopup('<b>' + layer.feature.properties.GEN + '</b><br><p>' + "Cases: " + layer.feature.properties.cases + '</p><p>' + "Deaths: " + layer.feature.properties.deaths + '</p>');
       layer.bindTooltip(layer.feature.properties.GEN);
+
+      layer.setStyle({
+        fillColor: getFillColor(parseInt(layer.feature.properties.cases7_per_100k)),
+        color: "#000"
+      });
+
     }
+
   });
 
-  let selected;
-
-  corona.on('click', (e) => {
-    // Check for selected
-    if (selected) {
-      // Reset selected to default style
-      e.target.resetStyle(selected);
-    };
-    // Assign new selected
+  corona.on("mouseover", (e) => {
     selected = e.layer;
-
-    console.log(selected.feature.properties.GEN);
-
-    // Bring selected to front
-    selected.bringToFront();
-    // Style selected
+    console.log(selected.feature.properties.cases7_per_100k);
+    console.log(selected.options);
+    initialStyle = selected.options.fillOpacity;
     selected.setStyle({
-      color: 'red'
-    })
+      fillOpacity: 0.8
+    });
   })
 
-  corona.on('mouseover', (e) => {
-    // Check for selected
-    if (selected) {
-      // Reset selected to default style
-      e.target.resetStyle(selected);
-    };
-    // Assign new selected
-    selected = e.layer;
+  corona.on("mouseout", (e) => {
+    e.layer.setStyle({
+      fillOpacity: initialStyle
+    });
 
-    // Bring selected to front
-    selected.bringToFront();
-    // Style selected
-    selected.setStyle({
-      color: 'yellow'
-    })
   })
 
   corona.addTo(map);
+
 });
+
+function getFillColor(caseCount) {
+  return caseCount == 0 ? 'gray' :
+    caseCount < 35 ? '#FEF001' :
+    caseCount < 50 ? '#FFCE03' :
+    caseCount < 100 ? '#FD6104' :'#F00505';
+}
