@@ -1,8 +1,5 @@
-// var geojson = {"type": "FeatureCollection","features": [{"type": "Feature","properties": {},"geometry": {"type": "LineString","coordinates": [[6.65771484375,50.62507306341435],[6.9873046875,50.51342652633956],[7.3828125,50.62507306341435],[7.55859375,50.86144411058924],[7.470703125,51.138001488062564]]}},{"type": "Feature","properties": {},"geometry": {"type": "Polygon","coordinates": [[[7.71240234375,50.52739681329302],[8.349609375,50.317408112618686],[8.525390625,50.61113171332364],[7.998046875,50.98609893339354],[7.71240234375,50.52739681329302]]]}},{"type": "Feature","properties": {"marker-color": "#7e7e7e","marker-size": "medium","marker-symbol": ""},"geometry": {"type": "Point","coordinates": [7.646484374999999,51.481382896100975]}}]};
-// L.geoJSON(geojson).addTo(mymap);
-
 let coronaDE = $.ajax({
-  url: "http://localhost:3000/data",
+  url: "/data",
   dataType: "json",
   success: console.log("Corona data successfully loaded."),
   error: function (xhr) {
@@ -20,7 +17,7 @@ $.when(coronaDE).done(() => {
   }).addTo(map);
 
   let corona = L.geoJSON(coronaDE.responseJSON, {
-    style: function (layer) {
+    style: function () {
       return {
         fillOpacity: 0.5,
         opacity: 0.7,
