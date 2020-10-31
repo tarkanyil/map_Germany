@@ -1,5 +1,5 @@
 let coronaDE = $.ajax({
-  url: "mapde-env.eba-wemmzmm9.eu-central-1.elasticbeanstalk.com/data",
+  url: "http://mapde-env.eba-wemmzmm9.eu-central-1.elasticbeanstalk.com/data",
   dataType: "json",
   success: console.log("Corona data successfully loaded."),
   error: function (xhr) {
