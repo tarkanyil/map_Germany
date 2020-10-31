@@ -42,7 +42,7 @@ app.get("/", function (req, res) {
 app.get("/data", function (req, res) {
   let tryToSend = setInterval(sendData, 100);
   function sendData() {
-    if (ready) {
+    if (dataLoaded) {
       console.log(dataLoaded, "kééész");
       clearInterval(tryToSend);
       res.json(json);
