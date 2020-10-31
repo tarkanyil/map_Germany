@@ -40,6 +40,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/data", function (req, res) {
+  res.connection.setTimeout(100000);
   let tryToSend = setInterval(sendData, 100);
   function sendData() {
     if (dataLoaded) {
